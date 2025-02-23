@@ -18,19 +18,13 @@ public class Main {
         }
 
         for(int i = 1; i < n; i++) {
-            int insert_Idx = 0;
             int num = arr[i];
-
-            for(int j = i - 1; j >= 0; j--) {
-                if(arr[j] < num) {
-                    insert_Idx = j+1;
-                    break;
-                }
+            int j = i - 1;
+            while (j >= 0 && arr[j] > num) {
+                arr[j + 1] = arr[j];
+                j--;
             }
-            for(int j = i; j > insert_Idx; j--) {
-                arr[j] = arr[j-1];
-            }
-            arr[insert_Idx] = num;
+            arr[j + 1] = num;
         }
 
         for(int i = 0; i < n; i++) {
