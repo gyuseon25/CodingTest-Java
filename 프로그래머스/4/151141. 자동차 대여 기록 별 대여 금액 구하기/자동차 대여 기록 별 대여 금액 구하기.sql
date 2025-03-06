@@ -1,0 +1,25 @@
+SELECT 
+    h.HISTORY_ID, 
+    ROUND(
+        ((c.DAILY_FEE * h.RENTAL_DAY) * 
+        (1 - COALESCE(
+            (SELECT DISCOUNT_RATE 
+             FROM CAR_RENTAL_COMPANY_DISCOUNT_PLAN 
+             WHERE CAR_TYPE = '트럭' 
+             AND CAST(REPLACE(DURATION_TYPE, '일 이상', '') AS UNSIGNED) <= h.RENTAL_DAY 
+             ORDER BY CAST(REPLACE(DURATION_TYPE, '일 이상', '') AS UNSIGNED) DESC 
+             LIMIT 1
+            ) / 100, 0)
+        )), 0
+    ) AS FEE
+FROM 
+    CAR_RENTAL_COMPANY_CAR c 
+JOIN 
+    (SELECT HISTORY_ID, CAR_ID, DATEDIFF(END_DATE, START_DATE) + 1 AS RENTAL_DAY
+     FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
+    ) h
+ON 
+    c.CAR_TYPE = '트럭' 
+    AND c.CAR_ID = h.CAR_ID
+ORDER BY 
+    FEE DESC, HISTORY_ID DESC;
