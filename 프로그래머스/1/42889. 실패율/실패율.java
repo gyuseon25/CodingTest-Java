@@ -2,45 +2,53 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int N, int[] stages) {
-        int[] 도달 = new int[N + 2];
-
-        for (int s : stages) {
-            도달[s]++;
-        }
-
-        List<Stage> 실패율리스트 = new ArrayList<>();
-        int total = stages.length;
-
-        for (int i = 1; i <= N; i++) {
-            int 실패 = 도달[i];
-            double 실패율 = 0;
-            if (total != 0) {
-                실패율 = (double) 실패 / total;
+        
+        Arrays.sort(stages);
+        
+        int numbers = stages.length;
+        int idx = 0;
+        List<Stage> list = new ArrayList<>();
+        
+        for(int i = 1; i <= N; i++) {
+            int count = 0;
+            while (idx < stages.length && stages[idx] == i) {
+                count++;
+                idx++;
             }
-            실패율리스트.add(new Stage(i, 실패율));
-            total -= 실패;
+            
+            double p = 0;
+            if (numbers != 0) {
+                p = (double) count / numbers;
+            }
+            numbers -= count;
+            
+            list.add(new Stage(i, p));
         }
-
-        Collections.sort(실패율리스트, (a, b) -> {
-            if (b.rate == a.rate) return a.stage - b.stage;
-            return Double.compare(b.rate, a.rate);
-        });
-
+        
+        Collections.sort(list);
+        
         int[] answer = new int[N];
-        for (int i = 0; i < N; i++) {
-            answer[i] = 실패율리스트.get(i).stage;
+        for(int i = 0; i < N; i++) {
+            answer[i] = list.get(i).n;
         }
-
         return answer;
     }
-
-    class Stage {
-        int stage;
-        double rate;
-
-        Stage(int stage, double rate) {
-            this.stage = stage;
-            this.rate = rate;
+    
+    class Stage implements Comparable<Stage> {
+        int n; //스테이지 단계
+        double p; //실패율 확률
+        
+        Stage (int n, double p) {
+            this.n = n;
+            this.p = p;
+        }
+        
+        @Override
+        public int compareTo(Stage o) {
+            if(this.p == o.p) {
+                return this.n - o.n; //스테이지 단계 별 오름차순
+            }
+            return Double.compare(o.p, this.p);  //실패율 별 내림차순
         }
     }
 }
