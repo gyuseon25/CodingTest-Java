@@ -16,22 +16,22 @@ class Solution {
         }
         return answer;
     }
-    
+
     private boolean check(Deque<Character> deque) {
         Stack<Character> stack = new Stack<>();
 
 
         while (!deque.isEmpty()) {
-        char c = deque.pollFirst();
-        if (c == '(' || c == '{' || c == '[') {
-            stack.push(c);
-        } else {
-            if (stack.isEmpty()) return false;
-            char top = stack.pop();
-            if ((c == ')' && top != '(') ||
-                (c == '}' && top != '{') ||
-                (c == ']' && top != '[')) {
-                return false;
+            char c = deque.pollFirst();
+            if (c == '(' || c == '{' || c == '[') {
+                stack.push(c);
+            } else {
+                if (stack.isEmpty()) return false;
+                char top = stack.pop();
+                if ((c == ')' && top != '(') ||
+                        (c == '}' && top != '{') ||
+                        (c == ']' && top != '[')) {
+                    return false;
                 }
             }
         }
