@@ -3,30 +3,24 @@ import java.util.*;
 class Solution {
     public int solution(int[][] board, int[] moves) {
         int answer = 0;
-        int n = board.length;
         
-        Stack<Integer> stack = new Stack<>();
+        Stack<Integer> basket = new Stack<>();
         
-        for(int num : moves) {
-            int col = num - 1, doll = 0;
-            for(int i = 0; i < n; i++) {
-                if(board[i][col] != 0) {
-                    doll = board[i][col];
-                    board[i][col] = 0;
+        for(int m : moves) {
+            for(int i = 0; i < board.length; i++) {
+                int doll = board[i][m-1];
+                if(doll != 0) {
+                    board[i][m-1] = 0;
+                    if(!basket.isEmpty() && basket.peek() == doll) {
+                        basket.pop();
+                        answer += 2;
+                    } else {
+                        basket.push(doll);
+                    }
                     break;
                 }
             }
-            
-            if (doll == 0) continue;
-
-            if (!stack.isEmpty() && stack.peek() == doll) {
-                stack.pop();
-                answer += 2;
-            } else {
-                stack.push(doll);
-            }
         }
-        
         return answer;
     }
 }
