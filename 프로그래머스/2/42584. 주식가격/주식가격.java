@@ -4,30 +4,18 @@ class Solution {
     public int[] solution(int[] prices) {
         int[] answer = new int[prices.length];
         
-        Stack<Stock> stack = new Stack<>();
-        
-        for(int i = 0; i < prices.length; i++) {
-            Stock stock = new Stock(i, prices[i]);
-            while(!stack.isEmpty() && stack.peek().price > prices[i]) {
-                Stock top = stack.pop();
-                answer[top.minute] = i - top.minute;
+        for(int i = 0; i < prices.length - 1; i++) {
+            int p = prices[i];
+            int idx = 0;
+            for(int k = i + 1; k < prices.length; k++) {
+                if(p > prices[k] || k == prices.length - 1) {
+                    idx = k;
+                    break;                    
+                }
             }
-            stack.push(stock);
-        }
-        
-        while(!stack.isEmpty()) {
-            Stock top = stack.pop();
-            answer[top.minute] = prices.length - 1 - top.minute;
+            answer[i] = idx - i;
         }
         
         return answer;
-    }
-}
-class Stock { 
-    int minute;
-    int price;
-    public Stock (int minute, int price) {
-        this.minute = minute;
-        this.price = price;
     }
 }
