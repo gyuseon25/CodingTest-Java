@@ -2,38 +2,34 @@ import java.util.*;
 
 class Solution {
     public int solution(String[] want, int[] number, String[] discount) {
-        
         int answer = 0;
-        int sum = 0;
-        HashMap<String, Integer> map = new HashMap<>();
-        for(int i = 0 ; i < want.length; i++) {
-            map.put(want[i], map.getOrDefault(want[i], 0) + number[i]);
-            sum += number[i];
+        int len = 0;
+        HashMap<String, Integer> wm = new HashMap<>();
+        HashMap<String, Integer> dm = new HashMap<>();
+        
+        for(int i = 0; i < want.length; i++) {
+            wm.put(want[i], number[i]);
+            len += number[i];
         }
-        
-        
-        int len = discount.length - sum + 1;
         
         for(int i = 0; i < len; i++) {
-            boolean flag = false;
-            HashMap<String, Integer> copy = new HashMap<>(map);
-            for(int j = i; j < i + sum; j++) {
-                String value = discount[j];
-                if(!copy.containsKey(value) || copy.get(value) < 0) {
-                    flag = true;
-                    break;
-                }
-                copy.put(value, copy.get(value) - 1);
-            }
-            
-            Set<String> set = copy.keySet();
-            
-            for(String s : set) {
-                if(copy.get(s) > 0) flag = true;
-            }
-            
-            if(!flag) answer++;
+            dm.put(discount[i], dm.getOrDefault(discount[i], 0) + 1);
         }
+        
+        if(wm.equals(dm)) answer++;
+        
+        
+        for(int i = len; i < discount.length; i++) {
+            
+            dm.put(discount[i], dm.getOrDefault(discount[i], 0) + 1);
+            if(dm.get(discount[i - len]) == 1) {
+                dm.remove(discount[i - len]);
+            } else {
+                dm.put(discount[i - len], dm.get(discount[i - len]) - 1);
+            }
+            
+            if(wm.equals(dm)) answer++;
+        } 
         
         return answer;
     }
