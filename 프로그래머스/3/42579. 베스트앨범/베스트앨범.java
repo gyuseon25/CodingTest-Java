@@ -20,8 +20,8 @@ class Solution {
         }
         
         for(String s : map.keySet()) {
-            Genre genre = new Genre(s, map.get(s));
-            genreSet.add(genre);
+            Genre genre = new Genre(s, map.get(s)); 
+            genreSet.add(genre); //TreeSet이라 자동정렬되어서 들어감
         }
         
         for(Genre g : genreSet) {
