@@ -2,54 +2,70 @@ import java.util.*;
 
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
-
         ArrayList<Integer> answer = new ArrayList<>();
-        
         HashMap<String, Integer> map = new HashMap<>();
-        HashMap<String, List<IndexAndPlays>> info = new HashMap<>();
+        TreeSet<Genre> genreSet = new TreeSet<>();
+        HashMap<String, ArrayList<Music>> musicMap = new HashMap<>();
         
         for(int i = 0; i < genres.length; i++) {
             String genre = genres[i];
-            map.put(genre, map.getOrDefault(genre, 0) + plays[i]);
+            int play = plays[i];
+            int uid = i;
             
-            IndexAndPlays tmp = new IndexAndPlays(i, plays[i]);
-            List<IndexAndPlays> list = info.getOrDefault(genre, new ArrayList<IndexAndPlays>());
-            list.add(tmp);
-            info.put(genre, list);
+            map.put(genre, map.getOrDefault(genre, 0) + play);
+            
+            Music music = new Music(uid, play);
+            musicMap.putIfAbsent(genre, new ArrayList<>());
+            musicMap.get(genre).add(music);
         }
         
-        List<String> keySet = new ArrayList<>(map.keySet());
-        keySet.sort((o1, o2) -> map.get(o2).compareTo(map.get(o1)));
+        for(String s : map.keySet()) {
+            Genre genre = new Genre(s, map.get(s));
+            genreSet.add(genre);
+        }
         
-        for(String genre : keySet) {
-            List<IndexAndPlays> list = info.get(genre);
+        for(Genre g : genreSet) {
+            String genreName = g.name;
+            ArrayList<Music> list = musicMap.get(genreName);
             Collections.sort(list);
-            
-            for (int i = 0; i < Math.min(2, list.size()); i++) {
-                answer.add(list.get(i).idx);
+            int count = 0;
+            for(Music m : list) {
+                if(count >= 2) break;
+                answer.add(m.uid);
+                count++;
             }
         }
-            
-        int[] result = new int[answer.size()];
-        for (int i = 0; i < answer.size(); i++) {
-            result[i] = answer.get(i);
-        }
-        return result;
+        
+        return answer.stream().mapToInt(Integer::intValue).toArray();
     }
     
-    class IndexAndPlays implements Comparable<IndexAndPlays> {
-        int idx;
+    class Genre implements Comparable<Genre> {
+        String name;
+        int total;
+        
+        public Genre(String name, int total) {
+            this.name = name;
+            this.total = total;
+        }
+        
+        @Override
+        public int compareTo(Genre o) {
+            return o.total - this.total;
+        }
+    }
+    
+    class Music implements Comparable<Music> {
+        int uid;
         int play;
-        public IndexAndPlays(int idx, int play) {
-            this.idx = idx;
+        
+        public Music(int uid, int play) {
+            this.uid = uid;
             this.play = play;
         }
-
+        
         @Override
-        public int compareTo(IndexAndPlays o) {
-            if (this.play == o.play) {
-                return this.idx - o.idx;
-            }
+        public int compareTo(Music o) {
+            if(this.play == o.play) return this.uid - o.uid;
             return o.play - this.play;
         }
     }
