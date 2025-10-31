@@ -1,13 +1,6 @@
-SELECT ID,IFNULL((
-            SELECT
-                COUNT(*)
-            FROM
-                ECOLI_DATA
-            GROUP BY
-                PARENT_ID
-            HAVING
-                PARENT_ID = ID
-        ), 0
-    ) AS CHILD_COUNT
-FROM ECOLI_DATA
-ORDER BY ID ASC
+-- 코드를 작성해주세요
+SELECT a.ID AS ID, COUNT(b.ID) AS CHILD_COUNT
+FROM ECOLI_DATA a LEFT JOIN ECOLI_DATA b
+ON a.ID = b.PARENT_ID
+GROUP BY a.ID
+ORDER BY a.ID ASC
